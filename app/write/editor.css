@@ -1,0 +1,204 @@
+/* Editor container */
+.w-md-editor {
+  --md-editor-bg: transparent !important;
+  --md-editor-border-color: #e5e7eb !important;
+}
+
+/* Dark mode support */
+.dark .w-md-editor {
+  --md-editor-border-color: #374151 !important;
+}
+
+/* Editor textarea */
+.w-md-editor-text-input {
+  font-size: 1rem !important;
+  line-height: 1.75 !important;
+  padding: 1rem !important;
+}
+
+/* Preview section */
+.wmde-markdown {
+  font-size: 1rem !important;
+  line-height: 1.75 !important;
+  padding: 1rem !important;
+  background: transparent !important;
+}
+
+/* Toolbar */
+.w-md-editor-toolbar {
+  border: none !important;
+  background: transparent !important;
+  padding: 0.5rem 0 !important;
+}
+
+.w-md-editor-toolbar ul {
+  gap: 0.5rem;
+}
+
+.w-md-editor-toolbar li.active button {
+  color: #3b82f6 !important;
+}
+
+.w-md-editor-toolbar button {
+  color: #6b7280 !important;
+  margin: 0 !important;
+  border-radius: 0.375rem !important;
+  padding: 0.25rem 0.5rem !important;
+}
+
+/* Dark mode support */
+.dark .w-md-editor-toolbar button {
+  color: #9ca3af !important;
+}
+
+.w-md-editor-toolbar button:hover {
+  background: #f3f4f6 !important;
+  color: #1f2937 !important;
+}
+
+/* Dark mode support */
+.dark .w-md-editor-toolbar button:hover {
+  background: #1f2937 !important;
+  color: #f3f4f6 !important;
+}
+
+/* Editor content area */
+.w-md-editor-content {
+  background: transparent !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.5rem !important;
+}
+
+/* Preview content styling */
+.wmde-markdown h1 {
+  font-size: 2.25rem !important;
+  font-weight: 700 !important;
+  margin-top: 2.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.wmde-markdown h2 {
+  font-size: 1.875rem !important;
+  font-weight: 600 !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
+.wmde-markdown h3 {
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  margin-top: 1.75rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.wmde-markdown p {
+  margin-bottom: 1.25rem !important;
+}
+
+.wmde-markdown ul,
+.wmde-markdown ol {
+  margin-bottom: 1.25rem !important;
+  padding-left: 1.5rem !important;
+}
+
+.wmde-markdown li {
+  margin-bottom: 0.5rem !important;
+}
+
+.wmde-markdown code {
+  background: #f3f4f6 !important;
+  padding: 0.2rem 0.4rem !important;
+  border-radius: 0.25rem !important;
+  font-size: 0.875em !important;
+}
+
+.wmde-markdown pre {
+  background: #f3f4f6 !important;
+  padding: 1rem !important;
+  border-radius: 0.5rem !important;
+  margin: 1.5rem 0 !important;
+}
+
+.wmde-markdown blockquote {
+  border-left: 4px solid #e5e7eb !important;
+  padding-left: 1rem !important;
+  margin: 1.5rem 0 !important;
+  color: #4b5563 !important;
+}
+
+.wmde-markdown hr {
+  margin: 2rem 0 !important;
+  border-color: #e5e7eb !important;
+}
+
+.wmde-markdown table {
+  width: 100% !important;
+  margin: 1.5rem 0 !important;
+  border-collapse: collapse !important;
+}
+
+.wmde-markdown th,
+.wmde-markdown td {
+  padding: 0.75rem !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.wmde-markdown th {
+  background: #f9fafb !important;
+  font-weight: 600 !important;
+}
+
+/* Dark mode support */
+[data-color-mode="dark"] .w-md-editor,
+[data-color-mode="dark"] .wmde-markdown {
+  color: #e5e7eb !important;
+  background: #1f2937 !important;
+}
+
+[data-color-mode="dark"] .w-md-editor-toolbar li button {
+  color: #9ca3af !important;
+}
+
+[data-color-mode="dark"] .w-md-editor-toolbar li button:hover {
+  color: #e5e7eb !important;
+  background: #374151 !important;
+}
+
+[data-color-mode="dark"] .w-md-editor-content {
+  border-color: #374151 !important;
+}
+
+[data-color-mode="dark"] .wmde-markdown code {
+  background: #374151 !important;
+}
+
+[data-color-mode="dark"] .wmde-markdown pre {
+  background: #374151 !important;
+}
+
+[data-color-mode="dark"] .wmde-markdown blockquote {
+  border-color: #4b5563 !important;
+  color: #9ca3af !important;
+}
+
+[data-color-mode="dark"] .wmde-markdown th {
+  background: #374151 !important;
+}
+
+[data-color-mode="dark"] .wmde-markdown th,
+[data-color-mode="dark"] .wmde-markdown td {
+  border-color: #4b5563 !important;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.w-md-editor-text-pre::-webkit-scrollbar,
+.w-md-editor-preview::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.w-md-editor-text-pre,
+.w-md-editor-preview {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
