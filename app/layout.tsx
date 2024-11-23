@@ -13,7 +13,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Medium Clone',
+  title: 'WordFlow',
   description: 'A modern blogging platform built with Next.js',
 }
 

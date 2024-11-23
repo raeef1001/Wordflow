@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/prisma'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth/config'
 
 export async function GET(
   request: Request,
@@ -165,7 +165,7 @@ export async function DELETE(
     // Delete related records first
     await prisma.$transaction([
       // Delete article tags
-      prisma.articleTag.deleteMany({
+      prisma.tagsOnArticles.deleteMany({
         where: { articleId: params.articleId }
       }),
       // Delete article comments

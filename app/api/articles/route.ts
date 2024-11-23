@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { prisma } from '@/lib/prisma'
-import { authOptions } from '@/lib/auth'
+import { authOptions } from '@/lib/auth/config'
+import { prisma, Prisma } from '@/lib/prisma'
 import slugify from 'slugify'
 
 export async function POST(request: Request) {
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
           create: tags.map((tag: string) => ({
             tag: {
               connectOrCreate: {
-                where: { slug: slugify(tag, { lower: true }) },
+                where: { name: tag },
                 create: { 
                   name: tag,
                   slug: slugify(tag, { lower: true })
@@ -90,18 +90,18 @@ export async function GET(request: Request) {
   const tag = searchParams.get('tag')
   const authorId = searchParams.get('author')
 
-  const where = {
-    status: "PUBLISHED",
+  const where: Prisma.ArticleWhereInput = {
+    ...(authorId && { authorId }),
     ...(tag && {
       tags: {
         some: {
-          name: tag,
-        },
-      },
+          tag: {
+            name: tag
+          }
+        }
+      }
     }),
-    ...(authorId && {
-      authorId,
-    }),
+    status: "PUBLISHED"
   }
 
   try {

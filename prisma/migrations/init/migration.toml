@@ -1,4 +1,0 @@
-# This is an empty migration
-
-migration_name = "init"
-datamodel_provider = "sqlite"

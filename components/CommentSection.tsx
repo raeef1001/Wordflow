@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { format } from 'date-fns'
-import { FiMessageSquare, FiSend } from 'react-icons/fi'
-import { motion, AnimatePresence } from 'framer-motion'
 
 interface Comment {
   id: string
@@ -30,7 +28,6 @@ export function CommentSection({
   const [newComment, setNewComment] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [isExpanded, setIsExpanded] = useState(false)
 
   useEffect(() => {
     fetchComments()
@@ -52,6 +49,7 @@ export function CommentSection({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!session) {
+      // Redirect to login or show login modal
       return
     }
 
@@ -85,114 +83,84 @@ export function CommentSection({
 
   return (
     <div className="mt-12 max-w-3xl mx-auto">
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 mb-6"
-      >
-        <FiMessageSquare className="w-5 h-5" />
-        <span className="font-medium">
-          {comments.length} {comments.length === 1 ? 'Comment' : 'Comments'}
-        </span>
-      </button>
+      <h2 className="text-xl font-medium mb-8 text-gray-800 dark:text-gray-200">
+        {comments.length} {comments.length === 1 ? 'Comment' : 'Comments'}
+      </h2>
 
-      <AnimatePresence>
-        {isExpanded && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {session && (
-              <form onSubmit={handleSubmit} className="mb-8">
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 p-3 rounded-lg mb-4 text-sm"
-                  >
-                    {error}
-                  </motion.div>
-                )}
-                <div className="relative mb-4 group">
-                  <textarea
-                    id="comment"
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Share your thoughts..."
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 border-2 border-gray-100 dark:border-gray-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-500 transition-all duration-200 min-h-[100px] resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                    required
-                  />
-                  <div className="absolute bottom-3 right-3 flex items-center gap-2">
-                    <button
-                      type="submit"
-                      disabled={isLoading || !newComment.trim()}
-                      className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30"
-                    >
-                      {isLoading ? (
-                        <>
-                          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          <span>Posting...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Post</span>
-                          <FiSend className="w-4 h-4" />
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </form>
-            )}
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-4"
+      {session && (
+        <form onSubmit={handleSubmit} className="mb-12">
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 p-3 rounded-lg mb-4 text-sm">
+              {error}
+            </div>
+          )}
+          <div className="relative mb-4 group">
+            <textarea
+              id="comment"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Add to the discussion"
+              className="w-full px-0 py-4 bg-transparent border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:ring-0 focus:border-blue-500 transition-all duration-200 min-h-[80px] resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
+              required
+            />
+            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-200 dark:bg-gray-700 scale-x-0 group-focus-within:scale-x-100 transition-transform duration-200 origin-left" />
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={isLoading || !newComment.trim()}
+              className="px-6 py-2 bg-gray-900 dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 text-white dark:text-gray-900 rounded-full text-sm font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              {comments.map((comment, index) => (
-                <motion.div
-                  key={comment.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="p-4 rounded-xl bg-white dark:bg-gray-800/30 border border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-all duration-200 group"
-                >
-                  <div className="flex items-start gap-3">
-                    {comment.author.image ? (
-                      <img
-                        src={comment.author.image}
-                        alt={comment.author.name || ''}
-                        className="w-10 h-10 rounded-full object-cover ring-2 ring-gray-100 dark:ring-gray-800 group-hover:ring-gray-200 dark:group-hover:ring-gray-700 transition-all duration-200"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                        <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">
-                          {comment.author.name?.charAt(0).toUpperCase() || '?'}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="font-medium text-gray-900 dark:text-gray-100">
-                          {comment.author.name || 'Anonymous'}
-                        </p>
-                        <time className="text-sm text-gray-500 dark:text-gray-400">
-                          {format(new Date(comment.createdAt), 'MMM d, yyyy')}
-                        </time>
-                      </div>
-                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words leading-relaxed">
-                        {comment.content}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              {isLoading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+                  <span>Posting...</span>
+                </>
+              ) : (
+                'Reply'
+              )}
+            </button>
+          </div>
+        </form>
+      )}
+
+      <div className="space-y-8">
+        {comments.map((comment) => (
+          <div
+            key={comment.id}
+            className="group"
+          >
+            <div className="flex items-start gap-4">
+              {comment.author.image ? (
+                <img
+                  src={comment.author.image}
+                  alt={comment.author.name || ''}
+                  className="w-8 h-8 rounded-full object-cover ring-2 ring-white dark:ring-gray-800"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                    {comment.author.name?.charAt(0) || '?'}
+                  </span>
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    {comment.author.name || 'Anonymous'}
+                  </span>
+                  <time className="text-xs text-gray-500 dark:text-gray-400">
+                    {format(new Date(comment.createdAt), 'MMM d')}
+                  </time>
+                </div>
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                  {comment.content}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

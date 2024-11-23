@@ -149,7 +149,46 @@ export default function WritePage() {
     }
   }
 
-  const handlePublish = handleSubmit
+  const handlePublish = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    if (!title.trim() || !content.trim()) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
+    setIsLoading(true)
+    const publishToast = toast.loading(isEditing ? 'Updating your article...' : 'Publishing your article...')
+
+    try {
+      const response = await fetch(isEditing ? `/api/articles/${editId}` : '/api/articles', {
+        method: isEditing ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          content,
+          coverImage,
+          tags,
+          status: 'PUBLISHED',
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || 'Failed to publish article')
+      }
+
+      const data = await response.json()
+      toast.success(isEditing ? 'Article updated successfully!' : 'Article published successfully!', { id: publishToast })
+      router.push(`/article/${data.slug}`)
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to publish article', { id: publishToast })
+      console.error('Publish error:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">

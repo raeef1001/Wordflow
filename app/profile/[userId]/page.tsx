@@ -13,7 +13,11 @@ async function getProfile(userId: string) {
         where: { status: "PUBLISHED" },
         orderBy: { createdAt: 'desc' },
         include: {
-          tags: true,
+          tags: {
+            include: {
+              tag: true
+            }
+          },
           _count: {
             select: {
               comments: true,
@@ -111,12 +115,12 @@ export default async function ProfilePage({
                   <span>{article._count.comments} comments</span>
                 </div>
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {article.tags.map((tag) => (
+                  {article.tags.map((tagRelation) => (
                     <span
-                      key={tag.id}
+                      key={tagRelation.tag.id}
                       className="px-2 py-1 bg-gray-100 rounded-full text-xs text-gray-600"
                     >
-                      {tag.name}
+                      {tagRelation.tag.name}
                     </span>
                   ))}
                 </div>

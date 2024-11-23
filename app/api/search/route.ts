@@ -102,7 +102,7 @@ export async function GET(request: Request) {
             categories,
             dateRange: startDate && endDate ? { startDate, endDate } : null
           }),
-          resultCount: articles.length
+          results: articles.length
         }
       })
 

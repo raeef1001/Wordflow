@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { FiHome, FiFileText, FiBookmark, FiSettings, FiBarChart2 } from 'react-icons/fi'
+import Image from 'next/image'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -28,7 +28,28 @@ export default function DashboardLayout({ children, activeTab = 'overview' }: Da
         <div className="hidden md:flex md:w-64 md:flex-col">
           <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-white dark:bg-gray-800 border-r dark:border-gray-700">
             <div className="flex items-center flex-shrink-0 px-4">
-              <h2 className="text-lg font-semibold">Dashboard</h2>
+              <div className="flex items-center space-x-3">
+                {session?.user?.image ? (
+                  <Image
+                    src={session.user.image}
+                    alt={session.user.name || ''}
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                    priority={true}
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700" />
+                )}
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {session?.user?.name}
+                  </h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {session?.user?.email}
+                  </p>
+                </div>
+              </div>
             </div>
             <div className="mt-5 flex-grow flex flex-col">
               <nav className="flex-1 px-2 space-y-1">
