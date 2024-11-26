@@ -1,0 +1,335 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Authentication models
+model Account {
+  id                String    @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String    @id @default(cuid())
+  sessionToken String    @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String    @unique
+  expires    DateTime
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// Core application models
+model Article {
+  id          String    @id @default(cuid())
+  title       String
+  content     String
+  slug        String    @unique
+  coverImage  String?   // Added coverImage field
+  status      String    @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+  featured    Boolean   @default(false)   // Added featured field
+  excerpt     String?   // Added excerpt field
+  metadata    String?   // Store JSON metadata
+  views       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  // Relations
+  authorId      String
+  author        User           @relation(fields: [authorId], references: [id])
+  comments      Comment[]
+  claps         Clap[]
+  tags          TagsOnArticles[]
+  categories    CategoriesOnArticles[]
+  bookmarks     Bookmark[]
+  readHistory   ReadHistory[]
+  relatedFrom   RelatedArticle[] @relation("source")
+  relatedTo     RelatedArticle[] @relation("related")
+
+  @@index([authorId])
+  @@index([slug])
+  @@index([status])
+  @@map("articles")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  bio           String?   // Added bio field
+  website       String?   // Added website field
+  password      String?
+  role          String    @default("USER") // USER, EDITOR, ADMIN
+  status        String    @default("ACTIVE") // ACTIVE, INACTIVE, SUSPENDED
+  settings      String?   // Store JSON as string for flexible settings
+  preferences   String?   // Store user preferences as JSON string
+  totalClaps    Int       @default(0)
+  totalViews    Int       @default(0)
+  totalReads    Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  articles      Article[]
+  comments      Comment[]
+  claps         Clap[]
+  followers     Follows[] @relation("following")
+  following     Follows[] @relation("follower")
+  bookmarks     Bookmark[]
+  searchHistory SearchHistory[]
+  readHistory   ReadHistory[]
+  interests     UserInterests[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Tag {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  // Relations
+  articles    TagsOnArticles[]
+
+  @@index([slug])
+  @@map("tags")
+}
+
+model TagsOnArticles {
+  articleId   String
+  tagId       String
+  assignedAt  DateTime @default(now())
+  assignedBy  String?
+
+  article     Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag         Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+  @@map("tags_on_articles")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  // Relations
+  articles    CategoriesOnArticles[]
+
+  @@index([slug])
+  @@map("categories")
+}
+
+model CategoriesOnArticles {
+  articleId   String
+  categoryId  String
+  assignedAt  DateTime @default(now())
+  assignedBy  String?
+
+  article     Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, categoryId])
+  @@map("categories_on_articles")
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  content   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relations
+  articleId String
+  article   Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: SetNull)
+  replies   Comment[] @relation("CommentReplies")
+
+  @@index([articleId])
+  @@index([authorId])
+  @@index([parentId])
+  @@map("comments")
+}
+
+model Clap {
+  id        String    @id @default(cuid())
+  count     Int       @default(1)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relations
+  articleId String
+  article   Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, userId])
+  @@index([articleId])
+  @@index([userId])
+  @@map("claps")
+}
+
+model Follows {
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower    User     @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+  @@map("follows")
+}
+
+model Bookmark {
+  id        String    @id @default(cuid())
+  userId    String
+  articleId String
+  settings  String?   // Store JSON settings like folders, notes, etc.
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId])
+  @@index([userId])
+  @@index([articleId])
+  @@map("bookmarks")
+}
+
+model SearchHistory {
+  id        String    @id @default(cuid())
+  userId    String
+  query     String
+  filters   String?   // Store search filters as JSON
+  results   Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("search_history")
+}
+
+model ReadHistory {
+  id         String    @id @default(cuid())
+  userId     String
+  articleId  String
+  readTime   Int       @default(0)  // Time spent reading in seconds
+  progress   Float     @default(0)  // Reading progress (0-1)
+  completed  Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([articleId])
+  @@map("read_history")
+}
+
+model UserInterests {
+  id        String    @id @default(cuid())
+  userId    String
+  interest  String    // Can be tag name or category name
+  weight    Float     @default(0.0)
+  source    String    // SEARCH, READ, BOOKMARK, MANUAL
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, interest])
+  @@index([userId])
+  @@map("user_interests")
+}
+
+model RelatedArticle {
+  id          String    @id @default(cuid())
+  articleId   String
+  relatedToId String
+  score       Float     @default(0.0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  sourceArticle Article @relation("source", fields: [articleId], references: [id], onDelete: Cascade)
+  relatedArticle Article @relation("related", fields: [relatedToId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, relatedToId])
+  @@index([articleId])
+  @@index([relatedToId])
+  @@map("related_articles")
+}

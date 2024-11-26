@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 180 20% 99%;
+    --foreground: 200 50% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 200 50% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 200 50% 20%;
+    --primary: 142 47% 50%;
+    --primary-foreground: 144 80% 98%;
+    --secondary: 180 20% 95%;
+    --secondary-foreground: 200 50% 20%;
+    --muted: 180 20% 95%;
+    --muted-foreground: 200 50% 40%;
+    --accent: 142 47% 95%;
+    --accent-foreground: 200 50% 20%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 180 20% 90%;
+    --input: 180 20% 90%;
+    --ring: 142 47% 50%;
+    --radius: 0.75rem;
+  }
+ 
+  .dark {
+    --background: 200 50% 8%;
+    --foreground: 180 20% 95%;
+    --card: 200 50% 10%;
+    --card-foreground: 180 20% 95%;
+    --popover: 200 50% 10%;
+    --popover-foreground: 180 20% 95%;
+    --primary: 142 47% 55%;
+    --primary-foreground: 144 80% 10%;
+    --secondary: 200 50% 15%;
+    --secondary-foreground: 180 20% 95%;
+    --muted: 200 50% 15%;
+    --muted-foreground: 180 20% 70%;
+    --accent: 142 47% 15%;
+    --accent-foreground: 180 20% 95%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 95%;
+    --border: 200 50% 15%;
+    --input: 200 50% 15%;
+    --ring: 142 47% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
+
+/* Blob Animation */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+/* Floating Animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Add gradient animations */
+.gradient-bg {
+  background: linear-gradient(
+    -45deg,
+    hsl(var(--primary) / 0.2),
+    hsl(var(--accent) / 0.2),
+    hsl(var(--secondary) / 0.2),
+    hsl(var(--muted) / 0.2)
+  );
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+.dark .gradient-bg {
+  background: linear-gradient(
+    -45deg,
+    hsl(var(--primary) / 0.1),
+    hsl(var(--accent) / 0.1),
+    hsl(var(--secondary) / 0.1),
+    hsl(var(--muted) / 0.1)
+  );
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
