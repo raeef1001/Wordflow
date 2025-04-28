@@ -8,24 +8,41 @@ import Link from 'next/link'
 async function getStats(userId: string) {
   const [articles, totalViews, totalClaps, totalComments, bookmarks] = await Promise.all([
     prisma.article.count({
-      where: { authorId: userId },
+      where: { 
+        authorId: userId,
+        deletedAt: null 
+      },
     }),
     prisma.article.aggregate({
-      where: { authorId: userId },
+      where: { 
+        authorId: userId,
+        deletedAt: null 
+      },
       _sum: { views: true },
     }),
     prisma.clap.count({
       where: {
-        article: { authorId: userId },
+        article: { 
+          authorId: userId,
+          deletedAt: null 
+        },
       },
     }),
     prisma.comment.count({
       where: {
-        article: { authorId: userId },
+        article: { 
+          authorId: userId,
+          deletedAt: null 
+        },
       },
     }),
     prisma.bookmark.count({
-      where: { userId },
+      where: { 
+        userId,
+        article: {
+          deletedAt: null
+        }
+      },
     }),
   ])
 
@@ -40,7 +57,11 @@ async function getStats(userId: string) {
 
 async function getRecentArticles(userId: string) {
   return prisma.article.findMany({
-    where: { authorId: userId },
+    where: { 
+      authorId: userId,
+      deletedAt: null,
+      status: "PUBLISHED" // Only show published articles
+    },
     orderBy: { createdAt: 'desc' },
     take: 5,
     include: {

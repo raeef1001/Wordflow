@@ -45,56 +45,10 @@ async function getArticles() {
   }
 }
 
-async function getFeaturedArticles() {
-  try {
-    const articles = await prisma.article.findMany({
-      where: { 
-        status: "PUBLISHED",
-        featured: true,
-        deletedAt: null
-      },
-      take: 3,
-      orderBy: {
-        createdAt: 'desc',
-      },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        excerpt: true,
-        coverImage: true,
-        createdAt: true,
-        author: {
-          select: {
-            name: true,
-            image: true,
-          },
-        },
-        tags: {
-          select: {
-            tag: true
-          }
-        },
-        _count: {
-          select: {
-            comments: true,
-            claps: true,
-          },
-        },
-      },
-    })
-    return articles
-  } catch (error) {
-    console.error('Error fetching featured articles:', error)
-    return []
-  }
-}
+// Featured articles function removed
 
 export default async function HomePage() {
-  const [articles, featuredArticles] = await Promise.all([
-    getArticles(),
-    getFeaturedArticles().catch(() => []),
-  ])
+  const articles = await getArticles()
 
   return (
     <main>
@@ -138,63 +92,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Featured Articles */}
-      {featuredArticles.length > 0 && (
-        <section className="bg-muted/30 dark:bg-background py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold mb-8 flex items-center text-foreground">
-              <FiTrendingUp className="mr-2" />
-              Featured Stories
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {featuredArticles.map((article) => (
-                <Link
-                  key={article.id}
-                  href={`/article/${article.slug}`}
-                  className="group"
-                >
-                  <article className="bg-card dark:bg-card/50 backdrop-blur-sm rounded-xl border border-border shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden">
-                    <div className="relative aspect-[2/1]">
-                      {article.coverImage ? (
-                        <Image
-                          src={article.coverImage}
-                          alt={article.title}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-muted flex items-center justify-center">
-                          <span className="text-muted-foreground">No image</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold mb-2 text-foreground group-hover:text-primary transition-colors duration-200">
-                        {article.title}
-                      </h3>
-                      {article.excerpt && (
-                        <p className="text-muted-foreground mb-4 line-clamp-2">
-                          {article.excerpt}
-                        </p>
-                      )}
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <div className="flex items-center space-x-4">
-                          <span className="flex items-center">
-                            <FiClock className="mr-1" />
-                            {format(new Date(article.createdAt), 'MMM d')}
-                          </span>
-                          <span>{article._count.claps} claps</span>
-                        </div>
-                        <FiBookmark className="group-hover:text-primary transition-colors duration-200" />
-                      </div>
-                    </div>
-                  </article>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Featured Articles section removed */}
 
       {/* Latest Articles Grid */}
       <section className="py-16 bg-background">

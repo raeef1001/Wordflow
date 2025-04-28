@@ -70,7 +70,6 @@ model Article {
   slug        String    @unique
   coverImage  String?   // Added coverImage field
   status      String    @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
-  featured    Boolean   @default(false)   // Added featured field
   excerpt     String?   // Added excerpt field
   metadata    String?   // Store JSON metadata
   views       Int       @default(0)

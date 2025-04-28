@@ -28,6 +28,7 @@ export async function GET(request: Request) {
 
     const where = {
       authorId: user.id,
+      deletedAt: null, // Filter out deleted articles
       ...(status && { status }),
     }
 
