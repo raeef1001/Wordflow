@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
-import { FiHome, FiFileText, FiBookmark, FiSettings, FiBarChart2 } from 'react-icons/fi'
+import { FiHome, FiFileText, FiBookmark, FiSettings, FiBarChart2, FiBell, FiAward } from 'react-icons/fi'
 import Image from 'next/image'
 
 interface DashboardLayoutProps {
@@ -18,6 +18,8 @@ export default function DashboardLayout({ children, activeTab = 'overview' }: Da
     { name: 'Articles', href: '/dashboard/articles', icon: FiFileText, current: activeTab === 'articles' },
     { name: 'Bookmarks', href: '/dashboard/bookmarks', icon: FiBookmark, current: activeTab === 'bookmarks' },
     { name: 'Analytics', href: '/dashboard/analytics', icon: FiBarChart2, current: activeTab === 'analytics' },
+    { name: 'Notifications', href: '/dashboard/notifications', icon: FiBell, current: activeTab === 'notifications' },
+    { name: 'Achievements', href: '/dashboard/achievements', icon: FiAward, current: activeTab === 'achievements' },
     { name: 'Settings', href: '/dashboard/settings', icon: FiSettings, current: activeTab === 'settings' },
   ]
 

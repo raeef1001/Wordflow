@@ -9,6 +9,7 @@ import Image from 'next/image'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { BookmarkButton } from '@/components/BookmarkButton'
+import { ChartBarIcon, ClockIcon } from '@heroicons/react/24/outline'
 
 async function getArticle(slug: string) {
   const session = await getServerSession(authOptions)
@@ -55,6 +56,7 @@ export default async function ArticlePage({
 }: {
   params: { slug: string }
 }) {
+  const session = await getServerSession(authOptions)
   const article = await getArticle(params.slug)
   const isBookmarked = article.bookmarks && article.bookmarks.length > 0
 
@@ -123,6 +125,29 @@ export default async function ArticlePage({
           </Link>
         ))}
       </div>
+
+      {/* Author Tools - Only visible to the author or admin */}
+      {session?.user?.id && (session?.user?.id === article.authorId || session?.user?.role === 'ADMIN') && (
+        <div className="mb-8">
+          <h3 className="text-sm font-medium text-gray-500 mb-2">Author Tools</h3>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={`/article/${article.slug}/analytics`}
+              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <ChartBarIcon className="h-4 w-4 mr-1" />
+              Analytics
+            </Link>
+            <Link
+              href={`/article/${article.slug}/revisions`}
+              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <ClockIcon className="h-4 w-4 mr-1" />
+              Revision History
+            </Link>
+          </div>
+        </div>
+      )}
 
       <div className="border-t border-gray-200 pt-8">
         <ClapButton articleId={article.id} initialClaps={article._count.claps} />
