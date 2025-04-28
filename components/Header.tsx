@@ -5,9 +5,23 @@ import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
 import { FiEdit, FiUser, FiSearch } from 'react-icons/fi'
 import ThemeToggle from './ThemeToggle'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function Header() {
   const { data: session, status } = useSession()
+  const [searchQuery, setSearchQuery] = useState('')
+  const router = useRouter()
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      // Assuming the search query is a tag, we'll search by tag
+      const searchParams = new URLSearchParams()
+      searchParams.append('tags[]', searchQuery.trim())
+      router.push(`/?${searchParams.toString()}`)
+    }
+  }
 
   return (
     <header className="border-b bg-white/80 dark:bg-gray-900/80 backdrop-blur-md dark:border-gray-800 sticky top-0 z-50">
@@ -20,16 +34,18 @@ export default function Header() {
 
           {/* Search */}
           <div className="hidden md:block flex-1 max-w-lg mx-8">
-            <div className="relative">
+            <form onSubmit={handleSearch} className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <FiSearch className="h-5 w-5 text-muted-foreground" />
               </div>
               <input
                 type="text"
-                placeholder="Search WordFlow"
+                placeholder="Search by tag..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="block w-full pl-10 pr-3 py-2 border border-border rounded-full bg-muted/50 dark:bg-muted text-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
               />
-            </div>
+            </form>
           </div>
 
           {/* Navigation */}
