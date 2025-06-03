@@ -9,7 +9,7 @@
 
 WordFlow is a modern, feature-rich blogging platform built with Next.js 14, offering a seamless writing and reading experience. With support for Markdown, real-time previews, and a beautiful dark mode interface, it's the perfect place for writers and readers to connect.
 
-![WordFlow Screenshot](public/screenshot.png)
+![WordFlow Screenshot](wordflow_demo.gif)
 
 ## ✨ Features
 
